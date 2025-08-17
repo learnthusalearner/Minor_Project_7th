@@ -2,21 +2,19 @@ import os
 import pandas as pd
 import faiss
 import torch
-import threading
 
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
 
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
-import uvicorn
 import gradio as gr
-from pyngrok import ngrok
+import uvicorn
 
 # ------------------------------
 # 1. Load CSV and prepare chunks
 # ------------------------------
-csv_file = "gita.csv"   # change if needed
+csv_file = "gita.csv"   # make sure this file is in your repo
 df = pd.read_csv(csv_file)
 df["text"] = df.fillna("").astype(str).agg(" ".join, axis=1)
 
@@ -109,19 +107,8 @@ def ask_endpoint(q: str = Query(..., description="Your question")):
 app = gr.mount_gradio_app(app, demo, path="/ui")
 
 # ------------------------------
-# 7. Run (local or Colab)
+# 7. Run (Render/Local)
 # ------------------------------
 if __name__ == "__main__":
     PORT = int(os.getenv("PORT", 1111))
-
-    # If NGROK_AUTH_TOKEN is set, start tunnel
-    ngrok_auth_token = os.getenv("NGROK_AUTH_TOKEN")
-    if ngrok_auth_token:
-        ngrok.set_auth_token(ngrok_auth_token)
-        ngrok.kill()
-        public_url = ngrok.connect(PORT)
-        print("🌍 Public URL:", public_url.public_url)
-        print("📡 API endpoint:", public_url.public_url)
-        print("🎨 Gradio UI:", public_url.public_url)
-
     uvicorn.run(app, host="0.0.0.0", port=PORT)

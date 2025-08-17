@@ -1,10 +1,9 @@
-pandas
-sentence-transformers
-faiss-cpu
-transformers
-accelerate
-bitsandbytes
-gradio
 fastapi
 uvicorn
-pyngrok
+gradio
+torch
+transformers
+sentence-transformers
+faiss-cpu
+accelerate
+bitsandbytes
